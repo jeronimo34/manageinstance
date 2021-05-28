@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  script.
+    function copyToClipboard(){
+        var str = document.getElementsByTagName("div")[0].innerText;
+        var listener = function(e){
+          e.clipboardData.setData("text/plain" , str);    
+          // 本来のイベントをキャンセル
+          e.preventDefault();
+          // 終わったら一応削除
+          document.removeEventListener("copy", listener);
+        }
+  
+        // コピーのイベントが発生したときに、クリップボードに書き込むようにしておく
+        document.addEventListener("copy" , listener);
+        // コピー
+        document.execCommand("copy");
+        alert("クリップボードにインスタンス情報をコピーしました。");
+      }
+  h1= title
+  //- button(onclick="copyToClipboard()") クリップボードにコピー
+  div
+    ul
+      each item in instances
+        li
+          p #{item.Name}, #{item.State}, #{item.IP}
+          p
+            if item.State=='stopped'
+              a(href="/instance/start?InstanceId="+item.InstanceId) Start
+            else if item.State=='running'
+              a(href="/instance/stop?InstanceId="+item.InstanceId) Stop
+      
